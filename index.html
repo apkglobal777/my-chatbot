@@ -1,413 +1,421 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My AI Chatbot</title>
 
-    <title>My AI Chatbot</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
 
-        body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
+    .chat-container {
+      width: 100%;
+      max-width: 850px;
+      height: 90vh;
+      min-height: 600px;
+      background: #ffffff;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0,0,0,.3);
+      display: flex;
+      flex-direction: column;
+    }
 
-        .chat-container {
-            width: 100%;
-            max-width: 450px;
-            height: 650px;
-            background: white;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
-            display: flex;
-            flex-direction: column;
-        }
+    /* HEADER */
+    .header {
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      color: white;
+      padding: 18px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
 
-        /* Header */
-        .chat-header {
-            background: linear-gradient(135deg, #4f46e5, #7c3aed);
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
 
-        .chat-header h1 {
-            font-size: 24px;
-            margin-bottom: 5px;
-        }
+    .bot-icon {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: white;
+      color: #5b21b6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+    }
 
-        .chat-header p {
-            font-size: 13px;
-            opacity: 0.9;
-        }
+    .header h1 {
+      font-size: 21px;
+    }
 
-        /* Chat Messages */
-        .chat-box {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-            background: #f5f7fb;
-        }
+    .status {
+      font-size: 12px;
+      opacity: .9;
+      margin-top: 3px;
+    }
 
-        .message {
-            display: flex;
-            margin-bottom: 15px;
-        }
+    .clear-btn {
+      border: 1px solid rgba(255,255,255,.5);
+      background: transparent;
+      color: white;
+      padding: 9px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
 
-        .message-content {
-            max-width: 80%;
-            padding: 12px 15px;
-            border-radius: 15px;
-            font-size: 15px;
-            line-height: 1.5;
-        }
+    .clear-btn:hover {
+      background: rgba(255,255,255,.15);
+    }
 
-        .bot {
-            justify-content: flex-start;
-        }
+    /* QUICK BUTTONS */
+    .quick-buttons {
+      display: flex;
+      gap: 8px;
+      padding: 12px 15px;
+      overflow-x: auto;
+      border-bottom: 1px solid #eee;
+    }
 
-        .bot .message-content {
-            background: white;
-            color: #333;
-            border-bottom-left-radius: 3px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
+    .quick-buttons button {
+      white-space: nowrap;
+      border: 1px solid #6366f1;
+      background: white;
+      color: #4f46e5;
+      padding: 8px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+    }
 
-        .user {
-            justify-content: flex-end;
-        }
+    .quick-buttons button:hover {
+      background: #4f46e5;
+      color: white;
+    }
 
-        .user .message-content {
-            background: #4f46e5;
-            color: white;
-            border-bottom-right-radius: 3px;
-        }
+    /* CHAT */
+    .chat-box {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      background: #f7f8fc;
+    }
 
-        /* Input Area */
-        .input-area {
-            display: flex;
-            padding: 15px;
-            background: white;
-            border-top: 1px solid #ddd;
-            gap: 10px;
-        }
+    .message {
+      display: flex;
+      margin-bottom: 18px;
+      animation: appear .25s ease;
+    }
 
-        #userInput {
-            flex: 1;
-            border: 1px solid #ddd;
-            border-radius: 25px;
-            padding: 12px 18px;
-            outline: none;
-            font-size: 15px;
-        }
+    @keyframes appear {
+      from {
+        opacity: 0;
+        transform: translateY(5px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
-        #userInput:focus {
-            border-color: #4f46e5;
-        }
+    .message.user {
+      justify-content: flex-end;
+    }
 
-        #sendBtn {
-            width: 50px;
-            height: 50px;
-            border: none;
-            border-radius: 50%;
-            background: #4f46e5;
-            color: white;
-            font-size: 20px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
+    .message.bot {
+      justify-content: flex-start;
+    }
 
-        #sendBtn:hover {
-            background: #3730a3;
-            transform: scale(1.05);
-        }
+    .avatar {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-shrink: 0;
+      margin-right: 8px;
+      background: #e0e7ff;
+    }
 
-        /* Quick Questions */
-        .quick-buttons {
-            padding: 10px 15px;
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            background: white;
-        }
+    .user .avatar {
+      display: none;
+    }
 
-        .quick-buttons button {
-            white-space: nowrap;
-            border: 1px solid #4f46e5;
-            background: white;
-            color: #4f46e5;
-            padding: 7px 12px;
-            border-radius: 20px;
-            cursor: pointer;
-        }
+    .bubble {
+      max-width: 75%;
+      padding: 12px 16px;
+      border-radius: 17px;
+      line-height: 1.6;
+      font-size: 15px;
+      word-wrap: break-word;
+    }
 
-        .quick-buttons button:hover {
-            background: #4f46e5;
-            color: white;
-        }
+    .bot .bubble {
+      background: white;
+      color: #222;
+      border-bottom-left-radius: 4px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+    }
 
-        /* Mobile */
-        @media (max-width: 500px) {
-            body {
-                padding: 0;
-            }
+    .user .bubble {
+      background: #4f46e5;
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
 
-            .chat-container {
-                height: 100vh;
-                border-radius: 0;
-            }
-        }
-    </style>
+    /* TYPING */
+    .typing {
+      display: none;
+      align-items: center;
+      gap: 5px;
+      margin-bottom: 15px;
+    }
+
+    .typing span {
+      width: 8px;
+      height: 8px;
+      background: #777;
+      border-radius: 50%;
+      animation: typing 1.2s infinite;
+    }
+
+    .typing span:nth-child(2) {
+      animation-delay: .15s;
+    }
+
+    .typing span:nth-child(3) {
+      animation-delay: .3s;
+    }
+
+    @keyframes typing {
+      0%, 60%, 100% {
+        transform: translateY(0);
+      }
+      30% {
+        transform: translateY(-6px);
+      }
+    }
+
+    /* INPUT */
+    .input-area {
+      padding: 15px;
+      background: white;
+      border-top: 1px solid #ddd;
+      display: flex;
+      gap: 10px;
+    }
+
+    #userInput {
+      flex: 1;
+      border: 1px solid #d1d5db;
+      border-radius: 25px;
+      padding: 13px 18px;
+      font-size: 15px;
+      outline: none;
+    }
+
+    #userInput:focus {
+      border-color: #6366f1;
+      box-shadow: 0 0 0 3px rgba(99,102,241,.1);
+    }
+
+    #sendBtn {
+      width: 50px;
+      height: 50px;
+      border: none;
+      border-radius: 50%;
+      background: #4f46e5;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    #sendBtn:hover {
+      background: #3730a3;
+    }
+
+    #sendBtn:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+    }
+
+    /* MOBILE */
+    @media(max-width:600px) {
+      body {
+        padding: 0;
+      }
+
+      .chat-container {
+        height: 100vh;
+        min-height: 100vh;
+        border-radius: 0;
+      }
+
+      .header h1 {
+        font-size: 17px;
+      }
+
+      .bubble {
+        max-width: 85%;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-    <div class="chat-container">
+<div class="chat-container">
 
-        <!-- Header -->
-        <div class="chat-header">
-            <h1>🤖 My AI Chatbot</h1>
-            <p>Ask me anything!</p>
-        </div>
+  <!-- HEADER -->
+  <div class="header">
 
-        <!-- Quick Questions -->
-        <div class="quick-buttons">
-            <button onclick="quickMessage('What is AI?')">What is AI?</button>
-            <button onclick="quickMessage('What is HTML?')">HTML</button>
-            <button onclick="quickMessage('What is Python?')">Python</button>
-        </div>
+    <div class="brand">
+      <div class="bot-icon">🤖</div>
 
-        <!-- Chat Messages -->
-        <div class="chat-box" id="chatBox">
-
-            <div class="message bot">
-                <div class="message-content">
-                    👋 Hello! I am your chatbot.<br>
-                    How can I help you today?
-                </div>
-            </div>
-
-        </div>
-
-        <!-- Input -->
-        <div class="input-area">
-            <input
-                type="text"
-                id="userInput"
-                placeholder="Type your message..."
-                autocomplete="off"
-            >
-
-            <button id="sendBtn" onclick="sendMessage()">
-                ➤
-            </button>
-        </div>
-
+      <div>
+        <h1>My AI Assistant</h1>
+        <div class="status">● Powered by Groq</div>
+      </div>
     </div>
 
+    <button class="clear-btn" onclick="clearChat()">
+      Clear
+    </button>
 
-    <script>
-
-        const input = document.getElementById("userInput");
-        const chatBox = document.getElementById("chatBox");
-
-        // Send message when Enter is pressed
-        input.addEventListener("keydown", function(event) {
-            if (event.key === "Enter") {
-                sendMessage();
-            }
-        });
+  </div>
 
 
-        function addMessage(message, sender) {
+  <!-- QUICK QUESTIONS -->
+  <div class="quick-buttons">
+    <button onclick="quickAsk('What is Artificial Intelligence?')">
+      🤖 What is AI?
+    </button>
 
-            const messageDiv = document.createElement("div");
+    <button onclick="quickAsk('Teach me HTML for beginners')">
+      🌐 Learn HTML
+    </button>
 
-            messageDiv.classList.add("message");
-            messageDiv.classList.add(sender);
+    <button onclick="quickAsk('Explain Python for beginners')">
+      🐍 Python
+    </button>
 
-            const contentDiv = document.createElement("div");
-
-            contentDiv.classList.add("message-content");
-
-            contentDiv.innerHTML = message;
-
-            messageDiv.appendChild(contentDiv);
-
-            chatBox.appendChild(messageDiv);
-
-            // Scroll to bottom
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
+    <button onclick="quickAsk('Give me a JavaScript project idea')">
+      ⚡ JavaScript
+    </button>
+  </div>
 
 
-        function sendMessage() {
+  <!-- CHAT AREA -->
+  <div class="chat-box" id="chatBox">
 
-            const message = input.value.trim();
+    <div class="message bot">
+      <div class="avatar">🤖</div>
 
-            if (message === "") {
-                return;
-            }
+      <div class="bubble">
+        👋 <b>Hello!</b><br><br>
+        I am your AI assistant powered by Groq.
+        <br><br>
+        Ask me anything about programming, AI,
+        web development, Python, JavaScript,
+        HTML, CSS and more.
+      </div>
+    </div>
 
-            // Show user message
-            addMessage(message, "user");
-
-            // Clear input
-            input.value = "";
-
-            // Bot typing delay
-            setTimeout(function() {
-
-                const response = getBotResponse(message);
-
-                addMessage(response, "bot");
-
-            }, 600);
-        }
+  </div>
 
 
-        function quickMessage(message) {
-
-            input.value = message;
-
-            sendMessage();
-        }
-
-
-        function getBotResponse(message) {
-
-            const text = message.toLowerCase();
+  <!-- TYPING -->
+  <div class="typing" id="typing">
+    <div class="avatar">🤖</div>
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
 
 
-            // Greetings
-            if (
-                text.includes("hello") ||
-                text.includes("hi") ||
-                text.includes("hey") ||
-                text.includes("namaste")
-            ) {
-                return "👋 Hello! Nice to meet you. How can I help you?";
-            }
+  <!-- INPUT -->
+  <div class="input-area">
+
+    <input
+      type="text"
+      id="userInput"
+      placeholder="Ask me anything..."
+      autocomplete="off"
+    >
+
+    <button id="sendBtn" onclick="sendMessage()">
+      ➤
+    </button>
+
+  </div>
+
+</div>
 
 
-            // AI
-            if (
-                text.includes("what is ai") ||
-                text.includes("ai kya hai")
-            ) {
-                return `
-                    🤖 <b>AI</b> means Artificial Intelligence.<br><br>
-                    AI is a technology that allows computers
-                    to perform tasks that normally require human intelligence.
-                    <br><br>
-                    Example: ChatGPT, voice assistants and recommendation systems.
-                `;
-            }
+<script>
+
+  /* ==========================================
+     PUT YOUR NEW GROQ API KEY HERE
+     ========================================== */
+
+  const GROQ_API_KEY = "YOUR_NEW_GROQ_API_KEY";
 
 
-            // HTML
-            if (text.includes("html")) {
-                return `
-                    🌐 <b>HTML</b> stands for HyperText Markup Language.<br><br>
-                    It is used to create the structure of websites.
-                    <br><br>
-                    Example: headings, paragraphs, buttons, images and forms.
-                `;
-            }
+  /* ==========================================
+     GROQ API
+     ========================================== */
+
+  const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 
 
-            // CSS
-            if (text.includes("css")) {
-                return `
-                    🎨 <b>CSS</b> stands for Cascading Style Sheets.<br><br>
-                    CSS is used to design and style websites.
-                    <br><br>
-                    You can change colors, fonts, spacing, layouts and animations.
-                `;
-            }
+  /*
+     Model used by this chatbot.
+
+     If Groq changes model availability,
+     update this value from Groq's documentation.
+  */
+
+  const MODEL = "llama-3.3-70b-versatile";
 
 
-            // JavaScript
-            if (
-                text.includes("javascript") ||
-                text.includes("js")
-            ) {
-                return `
-                    ⚡ <b>JavaScript</b> is a programming language
-                    used to make websites interactive.
-                    <br><br>
-                    Example: buttons, forms, animations and chatbots.
-                `;
-            }
+  /* ==========================================
+     ELEMENTS
+     ========================================== */
+
+  const chatBox = document.getElementById("chatBox");
+  const userInput = document.getElementById("userInput");
+  const sendBtn = document.getElementById("sendBtn");
+  const typing = document.getElementById("typing");
 
 
-            // Python
-            if (text.includes("python")) {
-                return `
-                    🐍 <b>Python</b> is a popular programming language.
-                    <br><br>
-                    It is used for Web Development, Data Science,
-                    Artificial Intelligence, Machine Learning and Automation.
-                `;
-            }
+  /* ==========================================
+     CHAT MEMORY
+     ========================================== */
 
+  let conversation = [
 
-            // GitHub
-            if (text.includes("github")) {
-                return `
-                    🐙 <b>GitHub</b> is a platform used to store,
-                    manage and collaborate on software projects.
-                    <br><br>
-                    You can also use GitHub Pages to host websites.
-                `;
-            }
-
-
-            // Thank you
-            if (
-                text.includes("thank") ||
-                text.includes("thanks")
-            ) {
-                return "😊 You're welcome! Happy coding!";
-            }
-
-
-            // Bye
-            if (
-                text.includes("bye") ||
-                text.includes("goodbye")
-            ) {
-                return "👋 Goodbye! See you again!";
-            }
-
-
-            // Default response
-            return `
-                🤔 I am still learning.<br><br>
-                You can ask me about:
-                <br>
-                • AI 🤖<br>
-                • HTML 🌐<br>
-                • CSS 🎨<br>
-                • JavaScript ⚡<br>
-                • Python 🐍<br>
-                • GitHub 🐙
-            `;
-        }
-
-    </script>
-
-</body>
-</html>
+    {
+      role: "system",
+      content:
+        "You are a friendly, helpful AI assistant. " +
+        "Give clear and accurate answers. " +
+        "
