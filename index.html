@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My AI Chatbot</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .chat-container {
+            width: 100%;
+            max-width: 450px;
+            height: 650px;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .chat-header {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .chat-header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .chat-header p {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        /* Chat Messages */
+        .chat-box {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f5f7fb;
+        }
+
+        .message {
+            display: flex;
+            margin-bottom: 15px;
+        }
+
+        .message-content {
+            max-width: 80%;
+            padding: 12px 15px;
+            border-radius: 15px;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .bot {
+            justify-content: flex-start;
+        }
+
+        .bot .message-content {
+            background: white;
+            color: #333;
+            border-bottom-left-radius: 3px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .user {
+            justify-content: flex-end;
+        }
+
+        .user .message-content {
+            background: #4f46e5;
+            color: white;
+            border-bottom-right-radius: 3px;
+        }
+
+        /* Input Area */
+        .input-area {
+            display: flex;
+            padding: 15px;
+            background: white;
+            border-top: 1px solid #ddd;
+            gap: 10px;
+        }
+
+        #userInput {
+            flex: 1;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            padding: 12px 18px;
+            outline: none;
+            font-size: 15px;
+        }
+
+        #userInput:focus {
+            border-color: #4f46e5;
+        }
+
+        #sendBtn {
+            width: 50px;
+            height: 50px;
+            border: none;
+            border-radius: 50%;
+            background: #4f46e5;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        #sendBtn:hover {
+            background: #3730a3;
+            transform: scale(1.05);
+        }
+
+        /* Quick Questions */
+        .quick-buttons {
+            padding: 10px 15px;
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            background: white;
+        }
+
+        .quick-buttons button {
+            white-space: nowrap;
+            border: 1px solid #4f46e5;
+            background: white;
+            color: #4f46e5;
+            padding: 7px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        .quick-buttons button:hover {
+            background: #4f46e5;
+            color: white;
+        }
+
+        /* Mobile */
+        @media (max-width: 500px) {
+            body {
+                padding: 0;
+            }
+
+            .chat-container {
+                height: 100vh;
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="chat-container">
+
+        <!-- Header -->
+        <div class="chat-header">
+            <h1>🤖 My AI Chatbot</h1>
+            <p>Ask me anything!</p>
+        </div>
+
+        <!-- Quick Questions -->
+        <div class="quick-buttons">
+            <button onclick="quickMessage('What is AI?')">What is AI?</button>
+            <button onclick="quickMessage('What is HTML?')">HTML</button>
+            <button onclick="quickMessage('What is Python?')">Python</button>
+        </div>
+
+        <!-- Chat Messages -->
+        <div class="chat-box" id="chatBox">
+
+            <div class="message bot">
+                <div class="message-content">
+                    👋 Hello! I am your chatbot.<br>
+                    How can I help you today?
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Input -->
+        <div class="input-area">
+            <input
+                type="text"
+                id="userInput"
+                placeholder="Type your message..."
+                autocomplete="off"
+            >
+
+            <button id="sendBtn" onclick="sendMessage()">
+                ➤
+            </button>
+        </div>
+
+    </div>
+
+
+    <script>
+
+        const input = document.getElementById("userInput");
+        const chatBox = document.getElementById("chatBox");
+
+        // Send message when Enter is pressed
+        input.addEventListener("keydown", function(event) {
+            if (event.key === "Enter") {
+                sendMessage();
+            }
+        });
+
+
+        function addMessage(message, sender) {
+
+            const messageDiv = document.createElement("div");
+
+            messageDiv.classList.add("message");
+            messageDiv.classList.add(sender);
+
+            const contentDiv = document.createElement("div");
+
+            contentDiv.classList.add("message-content");
+
+            contentDiv.innerHTML = message;
+
+            messageDiv.appendChild(contentDiv);
+
+            chatBox.appendChild(messageDiv);
+
+            // Scroll to bottom
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+
+        function sendMessage() {
+
+            const message = input.value.trim();
+
+            if (message === "") {
+                return;
+            }
+
+            // Show user message
+            addMessage(message, "user");
+
+            // Clear input
+            input.value = "";
+
+            // Bot typing delay
+            setTimeout(function() {
+
+                const response = getBotResponse(message);
+
+                addMessage(response, "bot");
+
+            }, 600);
+        }
+
+
+        function quickMessage(message) {
+
+            input.value = message;
+
+            sendMessage();
+        }
+
+
+        function getBotResponse(message) {
+
+            const text = message.toLowerCase();
+
+
+            // Greetings
+            if (
+                text.includes("hello") ||
+                text.includes("hi") ||
+                text.includes("hey") ||
+                text.includes("namaste")
+            ) {
+                return "👋 Hello! Nice to meet you. How can I help you?";
+            }
+
+
+            // AI
+            if (
+                text.includes("what is ai") ||
+                text.includes("ai kya hai")
+            ) {
+                return `
+                    🤖 <b>AI</b> means Artificial Intelligence.<br><br>
+                    AI is a technology that allows computers
+                    to perform tasks that normally require human intelligence.
+                    <br><br>
+                    Example: ChatGPT, voice assistants and recommendation systems.
+                `;
+            }
+
+
+            // HTML
+            if (text.includes("html")) {
+                return `
+                    🌐 <b>HTML</b> stands for HyperText Markup Language.<br><br>
+                    It is used to create the structure of websites.
+                    <br><br>
+                    Example: headings, paragraphs, buttons, images and forms.
+                `;
+            }
+
+
+            // CSS
+            if (text.includes("css")) {
+                return `
+                    🎨 <b>CSS</b> stands for Cascading Style Sheets.<br><br>
+                    CSS is used to design and style websites.
+                    <br><br>
+                    You can change colors, fonts, spacing, layouts and animations.
+                `;
+            }
+
+
+            // JavaScript
+            if (
+                text.includes("javascript") ||
+                text.includes("js")
+            ) {
+                return `
+                    ⚡ <b>JavaScript</b> is a programming language
+                    used to make websites interactive.
+                    <br><br>
+                    Example: buttons, forms, animations and chatbots.
+                `;
+            }
+
+
+            // Python
+            if (text.includes("python")) {
+                return `
+                    🐍 <b>Python</b> is a popular programming language.
+                    <br><br>
+                    It is used for Web Development, Data Science,
+                    Artificial Intelligence, Machine Learning and Automation.
+                `;
+            }
+
+
+            // GitHub
+            if (text.includes("github")) {
+                return `
+                    🐙 <b>GitHub</b> is a platform used to store,
+                    manage and collaborate on software projects.
+                    <br><br>
+                    You can also use GitHub Pages to host websites.
+                `;
+            }
+
+
+            // Thank you
+            if (
+                text.includes("thank") ||
+                text.includes("thanks")
+            ) {
+                return "😊 You're welcome! Happy coding!";
+            }
+
+
+            // Bye
+            if (
+                text.includes("bye") ||
+                text.includes("goodbye")
+            ) {
+                return "👋 Goodbye! See you again!";
+            }
+
+
+            // Default response
+            return `
+                🤔 I am still learning.<br><br>
+                You can ask me about:
+                <br>
+                • AI 🤖<br>
+                • HTML 🌐<br>
+                • CSS 🎨<br>
+                • JavaScript ⚡<br>
+                • Python 🐍<br>
+                • GitHub 🐙
+            `;
+        }
+
+    </script>
+
+</body>
+</html>
